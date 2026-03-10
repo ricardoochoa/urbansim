@@ -5,11 +5,11 @@ UrbanSim
     :target: https://pypi.python.org/pypi/urbansim/
     :alt: Latest Version
 
-.. image:: https://travis-ci.org/UDST/urbansim.svg?branch=master
+.. image:: https://travis-ci.org/UDST/urbansim.svg?branch=dev
    :alt: Build Status
    :target: https://travis-ci.org/UDST/urbansim
 
-.. image:: https://coveralls.io/repos/UDST/urbansim/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/UDST/urbansim/badge.svg?branch=dev
    :alt: Test Coverage
    :target: https://coveralls.io/r/UDST/urbansim?branch=master
 
