@@ -56,7 +56,7 @@ def unit_choice(chooser_ids, alternative_ids, probabilities):
         'start: unit choice with {} choosers and {} alternatives'.format(
             len(chooser_ids), len(alternative_ids)))
 
-    choices = pd.Series(index=chooser_ids)
+    choices = pd.Series(index=chooser_ids, dtype=object)
 
     if probabilities.sum() == 0:
         # return all nan if there are no available units
@@ -589,7 +589,7 @@ class MNLDiscreteChoiceModel(DiscreteChoiceModel):
                 normalize(probs) * len(choosers)
                 ).reset_index(level=0, drop=True)
         elif self.probability_mode == 'full_product':
-            return probs.groupby(level=0).apply(normalize)\
+            return probs.groupby(level=0, group_keys=False).apply(normalize)\
                 .groupby(level=1).sum()
         else:
             raise ValueError(

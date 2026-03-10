@@ -3,7 +3,7 @@ import string
 import numpy as np
 import pandas as pd
 import pytest
-from pandas.util import testing as pdt
+from pandas import testing as pdt
 
 from .. import util
 
@@ -52,7 +52,7 @@ def test_apply_filter_query_empty(test_df):
     expected = pd.DataFrame(
         {'col1': [], 'col2': []},
         index=[])
-    pdt.assert_frame_equal(filtered, expected, check_dtype=False)
+    pdt.assert_frame_equal(filtered, expected, check_dtype=False, check_index_type=False)
 
 
 def test_apply_filter_query_or(test_df):

@@ -5,7 +5,7 @@ import pytest
 import os
 import tempfile
 import yaml
-from pandas.util import testing as pdt
+from pandas import testing as pdt
 
 from ...utils import testing
 
@@ -331,7 +331,7 @@ def test_mnl_dcm_choice_mode_agg(seed, basic_dcm_fit, choosers, alternatives):
 
     pdt.assert_series_equal(
         choices,
-        pd.Series(['f', 'a', 'd', 'c'], index=[0, 1, 3, 4]))
+        pd.Series(['f', 'a', 'd', 'c'], index=[0, 1, 3, 4]), check_dtype=False)
 
 
 def test_mnl_dcm_group(seed, grouped_choosers, alternatives):

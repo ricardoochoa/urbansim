@@ -3,6 +3,7 @@ Utilities used within the ``urbansim.models`` package.
 
 """
 import collections
+import collections.abc
 import logging
 import numbers
 try:
@@ -46,6 +47,7 @@ def apply_filter_query(df, filters=None):
                 query = filters
             else:
                 query = ' and '.join(filters)
+            print("EXECUTING QUERY:", repr(query))
             return df.query(query)
         else:
             return df
@@ -73,6 +75,8 @@ def _filterize(name, value):
     filter_exp : str
 
     """
+    if hasattr(value, 'item'):
+        value = value.item()
     if name.endswith('_min'):
         name = name[:-4]
         comp = '>='
@@ -118,10 +122,8 @@ def filter_table(table, filter_series, ignore=None):
         ignore = ignore if ignore else set()
 
         filters = [_filterize(name, val)
-                   for name, val in filter_series.iteritems()
-                   if not (name in ignore or
-                           (isinstance(val, numbers.Number) and
-                            np.isnan(val)))]
+                   for name, val in filter_series.items()
+                   if not (name in ignore or pd.isna(val))]
 
         return apply_filter_query(table, filters)
 
@@ -199,7 +201,7 @@ def str_model_expression(expr, add_constant=True):
 
     """
     if not isinstance(expr, str):
-        if isinstance(expr, collections.Mapping):
+        if isinstance(expr, collections.abc.Mapping):
             left_side = expr.get('left_side')
             right_side = str_model_expression(expr['right_side'], add_constant)
         else:

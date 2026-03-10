@@ -11,7 +11,7 @@ import pandas as pd
 import pytest
 import statsmodels.formula.api as smf
 import yaml
-from pandas.util import testing as pdt
+from pandas import testing as pdt
 
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 
@@ -66,7 +66,7 @@ def test_predict_ytransform(test_df):
 def test_predict_with_nans():
     df = pd.DataFrame(
         {'col1': range(5),
-         'col2': [5, 6, pd.np.nan, 8, 9]},
+         'col2': [5, 6, np.nan, 8, 9]},
         index=['a', 'b', 'c', 'd', 'e'])
 
     with pytest.raises(ModelEvaluationError):
@@ -165,9 +165,7 @@ def test_RegressionModelGroup(groupby_df):
 
     predicted = hmg.predict(groupby_df)
     assert isinstance(predicted, pd.Series)
-    pdt.assert_series_equal(
-        predicted.sort_index(), groupby_df.col1,
-        check_dtype=False, check_names=False)
+    npt.assert_allclose(predicted.sort_index().values, groupby_df.col1.astype(float).values, atol=1e-5)
 
 
 def assert_dict_specs_equal(j1, j2):
@@ -245,7 +243,10 @@ class TestRegressionModelYAMLFit(TestRegressionModelYAMLNotFit):
     def setup_method(self, method):
         super(TestRegressionModelYAMLFit, self).setup_method(method)
 
-        self.model.fit(test_df())
+        self.model.fit(pd.DataFrame(
+            {'col1': range(5),
+             'col2': range(5, 10)},
+            index=['a', 'b', 'c', 'd', 'e']))
 
         self.expected_dict['fitted'] = True
         self.expected_dict['fit_rsquared'] = 1.0

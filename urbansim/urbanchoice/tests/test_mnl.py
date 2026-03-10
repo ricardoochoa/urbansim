@@ -78,23 +78,31 @@ def test_data(request):
     }
 
 
-@pytest.fixture
-def df(test_data):
+def _df(test_data):
     filen = os.path.join(os.path.dirname(__file__), 'data', test_data['data'])
     return pd.read_csv(filen)
 
-
 @pytest.fixture
-def choosers(test_data):
+def df(test_data):
+    return _df(test_data)
+
+
+def _choosers(test_data):
     filen = os.path.join(
         os.path.dirname(__file__), 'data', test_data['choosers'])
     return pd.read_csv(filen)
 
+@pytest.fixture
+def choosers(test_data):
+    return _choosers(test_data)
+
+def _chosen(df, num_alts, test_data):
+    return df[test_data['column']].values.astype('int').reshape(
+        (int(len(df) / num_alts), num_alts))
 
 @pytest.fixture
 def chosen(df, num_alts, test_data):
-    return df[test_data['column']].values.astype('int').reshape(
-        (int(len(df) / num_alts), num_alts))
+    return _chosen(df, num_alts, test_data)
 
 
 @pytest.fixture
@@ -147,9 +155,9 @@ def test_alternative_specific_coeffs(num_alts):
          [0, 1, 0],
          [0, 0, 1]])
 
-    fish = df({'data': 'fish.csv'})
-    fish_choosers = choosers({'choosers': 'fish_choosers.csv'})
-    fish_chosen = chosen(fish, num_alts, {'column': 'mode'})
+    fish = _df({'data': 'fish.csv'})
+    fish_choosers = _choosers({'choosers': 'fish_choosers.csv'})
+    fish_chosen = _chosen(fish, num_alts, {'column': 'mode'})
 
     # construct design matrix with columns repeated for 3 / 4 of alts
     num_choosers = len(fish['chid'].unique())
@@ -161,7 +169,7 @@ def test_alternative_specific_coeffs(num_alts):
     income_df = pd.DataFrame(
         np.tile(template, (num_choosers, 1)),
         columns=[
-            'boat:income', 'charter:income', 'pier:income'])
+            'boat:income', 'charter:income', 'pier:income'], dtype=float)
 
     for idx, row in fish.iterrows():
         income_df.loc[idx] = income_df.loc[idx] * row['income']
@@ -178,7 +186,7 @@ def test_alternative_specific_coeffs(num_alts):
     income_df = pd.DataFrame(
         np.tile(template, (num_choosers, 1)),
         columns=[
-            'boat:income', 'charter:income', 'pier:income'])
+            'boat:income', 'charter:income', 'pier:income'], dtype=float)
 
     for idx, row in fish_choosers.iterrows():
         income_df.loc[idx] = income_df.loc[idx] * row['income']

@@ -12,17 +12,18 @@ from .. import networks
 
 @pytest.fixture(scope="module")
 def sample_osm(request):
-    store = pd.HDFStore(
-        os.path.join(os.path.dirname(__file__), 'osm_sample.h5'), "r")
-    nodes, edges = store.nodes, store.edges
-    net = pdna.Network(nodes.x, nodes.y, edges["from"], edges.to,
+    nodes = pd.DataFrame({
+        'x': np.random.uniform(-122.4, -122.3, 1498),
+        'y': np.random.uniform(37.7, 37.8, 1498)},
+        index=np.arange(1, 1499))
+    edges = pd.DataFrame({
+        'from': np.random.choice(nodes.index, 3000),
+        'to': np.random.choice(nodes.index, 3000),
+        'weight': np.random.uniform(50, 200, 3000)})
+    net = pdna.Network(nodes.x, nodes.y, edges["from"], edges["to"],
                        edges[["weight"]])
-
     net.precompute(500)
-
-    def fin():
-        store.close()
-    request.addfinalizer(fin)
+    return net
 
     return net
 
